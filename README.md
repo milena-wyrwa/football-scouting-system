@@ -15,7 +15,7 @@ The goal is to transform raw scouting data into a structured, analytics-ready mo
 
 Data pipeline:
 
-RAW → STG → CLEAN → ANALYTICS → DASHBOARD
+RAW → STAGING → CLEANING → DIMENSIONS → ANALYTICS VIEW → DASHBOARD
 
 ---
 
