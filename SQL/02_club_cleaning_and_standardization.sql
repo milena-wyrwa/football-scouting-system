@@ -1,4 +1,4 @@
--- STEP 1: basic cleaning (NULL + trimming)
+-- 02A: basic cleaning (NULL + trimming)
 
 SELECT
     PlayerID,
@@ -10,7 +10,7 @@ SELECT
     Position
 FROM unified_raw;
 
--- STEP 2: standardization using LIKE patterns
+-- 02B: standardization using LIKE patterns
 
 SELECT
     PlayerID,
@@ -39,7 +39,7 @@ FROM (
     FROM unified_raw
 ) t;
 
--- STEP 3: special cases + final standardization
+-- 02C: special cases + final standardization
 
 SELECT
     PlayerID,
@@ -75,7 +75,7 @@ SELECT
 
 FROM unified_raw;
 
--- STEP 4: CREATE CLUB DIMENSION TABLE
+-- 02D: CREATE CLUB DIMENSION TABLE
 
 -- Create a reference table with unique clubs
 -- Each club gets a unique identifier (ClubID)
