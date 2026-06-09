@@ -1,91 +1,92 @@
--- 02A: basic cleaning (NULL + trimming)
+/* =========================================================
+/* =========================================================
+   02A. BASIC CLEANING
+========================================================= */
 
-SELECT
-    PlayerID,
-    PlayerName,
-    CASE
-        WHEN Club IS NULL THEN 'Unknown'
-        ELSE TRIM(Club)
-    END AS ClubCleaned,
-    Position
-FROM unified_raw;
+WITH club_cleaned AS (
 
--- 02B: standardization using LIKE patterns
-
-SELECT
-    PlayerID,
-    PlayerName,
-
-    CASE
-        WHEN ClubCleaned LIKE '%Lech%' THEN 'Lech Poznań'
-        WHEN ClubCleaned LIKE '%Legia%' THEN 'Legia Warszawa'
-        WHEN ClubCleaned LIKE '%Wisła%' THEN 'Wisła Kraków'
-        WHEN ClubCleaned LIKE '%Zagłębie%' THEN 'Zagłębie Lubin'
-        WHEN ClubCleaned LIKE '%Śląsk%' THEN 'Śląsk Wrocław'
-        WHEN ClubCleaned LIKE '%Raków%' THEN 'Raków Częstochowa'
-        WHEN ClubCleaned LIKE '%Widzew%' THEN 'Widzew Łódź'
-        WHEN ClubCleaned LIKE '%ŁKS%' THEN 'ŁKS Łódź'
-        WHEN ClubCleaned LIKE '%GKS%' THEN 'GKS Katowice'
-        WHEN ClubCleaned LIKE '%Korona%' THEN 'Korona Kielce'
-        WHEN ClubCleaned LIKE '%Pogoń%' THEN 'Pogoń Szczecin'
-        ELSE ClubCleaned
-    END AS ClubStep2
-
-FROM (
     SELECT
         PlayerID,
         PlayerName,
-        CASE WHEN Club IS NULL THEN 'Unknown' ELSE TRIM(Club) END AS ClubCleaned
+        BirthYear,
+        Position,
+
+        CASE
+            WHEN Club IS NULL THEN 'Unknown'
+            ELSE TRIM(Club)
+        END AS ClubCleaned
+
     FROM unified_raw
-) t;
+),
 
--- 02C: special cases + final standardization
+/* =========================================================
+   02B. STANDARDIZATION (MAIN CLUBS)
+========================================================= */
 
-SELECT
-    PlayerID,
-    PlayerName,
+club_standardized_main AS (
 
-    CASE
-        -- missing values
-        WHEN Club IS NULL THEN 'Unknown'
+    SELECT
+        PlayerID,
+        PlayerName,
+        BirthYear,
+        Position,
+        ClubCleaned,
 
-        -- basic normalization
-        WHEN Club LIKE '%Lech%' THEN 'Lech Poznań'
-        WHEN Club LIKE '%Legia%' THEN 'Legia Warszawa'
-        WHEN Club LIKE '%Wisła%' THEN 'Wisła Kraków'
-        WHEN Club LIKE '%Zagłębie%' THEN 'Zagłębie Lubin'
-        WHEN Club LIKE '%Śląsk%' THEN 'Śląsk Wrocław'
-        WHEN Club LIKE '%Raków%' THEN 'Raków Częstochowa'
-        WHEN Club LIKE '%Widzew%' THEN 'Widzew Łódź'
-        WHEN Club LIKE '%ŁKS%' THEN 'ŁKS Łódź'
-        WHEN Club LIKE '%GKS%' THEN 'GKS Katowice'
-        WHEN Club LIKE '%Korona%' THEN 'Korona Kielce'
-        WHEN Club LIKE '%Pogoń%' THEN 'Pogoń Szczecin'
+        CASE
+            WHEN ClubCleaned LIKE '%Lech%' THEN 'Lech Poznań'
+            WHEN ClubCleaned LIKE '%Legia%' THEN 'Legia Warszawa'
+            WHEN ClubCleaned LIKE '%Wisła%' THEN 'Wisła Kraków'
+            WHEN ClubCleaned LIKE '%Zagłębie%' THEN 'Zagłębie Lubin'
+            WHEN ClubCleaned LIKE '%Śląsk%' THEN 'Śląsk Wrocław'
+            WHEN ClubCleaned LIKE '%Raków%' THEN 'Raków Częstochowa'
+            WHEN ClubCleaned LIKE '%Widzew%' THEN 'Widzew Łódź'
+            WHEN ClubCleaned LIKE '%ŁKS%' THEN 'ŁKS Łódź'
+            WHEN ClubCleaned LIKE '%GKS%' THEN 'GKS Katowice'
+            WHEN ClubCleaned LIKE '%Korona%' THEN 'Korona Kielce'
+            WHEN ClubCleaned LIKE '%Pogoń%' THEN 'Pogoń Szczecin'
+            ELSE ClubCleaned
+        END AS ClubStep1
 
-        -- special cases
-        WHEN Club LIKE '%Trencin%' THEN 'AS Trenčín'
-        WHEN Club LIKE '%Toronto%' THEN 'Toronto FC'
-        WHEN Club LIKE '%Escola%' THEN 'Escola Varsovia'
+    FROM club_cleaned
+),
 
-        -- slash handling (simple)
-        WHEN Club LIKE '%/%' THEN REPLACE(Club, '/', '|')
+/* =========================================================
+   02C. SPECIAL CASES + FINAL CLUB NAME
+========================================================= */
 
-        ELSE TRIM(Club)
-    END AS ClubStandardized
+club_final AS (
 
-FROM unified_raw;
+    SELECT
+        PlayerID,
+        PlayerName,
+        BirthYear,
+        Position,
 
--- 02D: CREATE CLUB DIMENSION TABLE
+        CASE
+            WHEN ClubStep1 LIKE '%Trencin%' THEN 'AS Trenčín'
+            WHEN ClubStep1 LIKE '%Toronto%' THEN 'Toronto FC'
+            WHEN ClubStep1 LIKE '%Escola%' THEN 'Escola Varsovia'
+            ELSE ClubStep1
+        END AS ClubStandardized
 
--- Create a reference table with unique clubs
--- Each club gets a unique identifier (ClubID)
+    FROM club_standardized_main
+),
 
-CREATE TABLE dim_club AS
-SELECT DISTINCT
-    ClubStandardized AS ClubName
-FROM cleaned_data;
+/* =========================================================
+   02D. DIM TABLE (DISTINCT + CLUB ID)
+========================================================= */
 
--- Add primary key to dimension table
+dim_club AS (
 
-ALTER TABLE dim_club
-ADD ClubID INT IDENTITY(1,1) PRIMARY KEY;
+    SELECT
+        ROW_NUMBER() OVER (ORDER BY ClubName) AS ClubID,
+        ClubName
+    FROM (
+        SELECT DISTINCT
+            ClubStandardized AS ClubName
+        FROM club_final
+    ) d
+)
+
+SELECT *
+FROM club_final;
