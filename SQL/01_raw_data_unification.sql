@@ -10,6 +10,7 @@ WITH unified_raw AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         Club,
         Position,
         NULL AS Attributes,
@@ -21,6 +22,7 @@ WITH unified_raw AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         Club,
         Position,
         NULL AS Attributes,
@@ -32,6 +34,7 @@ WITH unified_raw AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         Club,
         Position,
         NULL AS Attributes,
@@ -43,6 +46,7 @@ WITH unified_raw AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         Club,
         Position,
         NULL AS Attributes,
@@ -54,6 +58,7 @@ WITH unified_raw AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         Club,
         Position,
         NULL AS Attributes,
@@ -65,6 +70,7 @@ WITH unified_raw AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         Club,
         Position,
         NULL AS Attributes,
@@ -76,6 +82,7 @@ WITH unified_raw AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         Club,
         Position,
         NULL AS Attributes,
@@ -87,6 +94,7 @@ WITH unified_raw AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         Club,
         Position,
         NULL AS Attributes,
@@ -98,6 +106,7 @@ WITH unified_raw AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         Club,
         Position,
         NULL AS Attributes,
