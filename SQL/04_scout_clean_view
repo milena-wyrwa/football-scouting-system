@@ -1,6 +1,38 @@
 /*=========================================================
   04A. BASE DATASET
   =========================================================*/
+
+SELECT
+    p.PlayerID,
+    p.PlayerName,
+    p.BirthYear,
+
+    c.ClubID,
+    c.ClubName,
+    c.City,
+
+    p.PositionMain,
+    p.PositionAlt,
+
+    p.RatingCategory,
+    p.Notes,
+    p.Info,
+    p.Scout,
+
+    p.Adam,
+    p.Kamil,
+    p.Slawek,
+    p.Wojtek
+
+FROM unified_raw p
+
+LEFT JOIN dim_club c
+    ON p.Club = c.ClubName;
+
+/*=========================================================
+  04B. FINAL VIEW
+  =========================================================*/
+
 CREATE VIEW vw_scout_clean AS
 
 SELECT
@@ -30,3 +62,4 @@ FROM unified_raw p
 
 LEFT JOIN dim_club c
     ON p.Club = c.ClubName;
+
