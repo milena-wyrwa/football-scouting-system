@@ -1,4 +1,7 @@
+=========================================================
 -- 03A: clean position format
+=========================================================
+
 
 WITH position_cleaned AS (
 
@@ -16,8 +19,11 @@ WITH position_cleaned AS (
     FROM unified_raw
 )
 
+=========================================================
 -- 03B: position normalization (long format)
 -- split positions into separate rows
+=========================================================
+    
 
 SELECT
     PlayerID,
