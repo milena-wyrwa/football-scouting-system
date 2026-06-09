@@ -1,0 +1,32 @@
+=========================================================
+04A. BASE DATASET
+=========================================================
+CREATE VIEW vw_scout_clean AS
+
+SELECT
+    p.PlayerID AS ZawodnikID,
+    p.PlayerName AS Imię,
+    p.PlayerSurname AS Nazwisko,
+    p.BirthYear AS Rocznik,
+
+    c.ClubName AS Klub,
+    c.City AS Miasto,
+
+    p.PositionMain AS Pozycja_Główna,
+    p.PositionAlt AS Pozycja_Alternatywna,
+
+    p.RatingCategory AS Ocena_kat,
+    p.Notes AS Uwagi,
+    p.Info AS Informacje,
+
+    p.Scout AS Kto_oglądał,
+
+    p.Adam,
+    p.Kamil,
+    p.Slawek,
+    p.Wojtek
+
+FROM unified_raw p
+
+LEFT JOIN dim_club c
+    ON p.Club = c.ClubName;
