@@ -8,6 +8,7 @@ WITH club_cleaned AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         BirthYear,
         Position,
 
@@ -28,6 +29,7 @@ club_standardized_main AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         BirthYear,
         Position,
         ClubCleaned,
@@ -59,6 +61,7 @@ club_final AS (
     SELECT
         PlayerID,
         PlayerName,
+        PlayerSurname,
         BirthYear,
         Position,
 
